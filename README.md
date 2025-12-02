@@ -12,7 +12,7 @@ Lomba-TechComfest-by_devitra.team adalah proyek web (frontend) karya tim devitra
 ## 📦 Instalasi  
 
 ```bash
-git clone https://github.com/devitra-labs/Lomba-TechComfest-by_devitra.team.git
-cd Lomba-TechComfest-by_devitra.team
+git clone https://github.com/devitra-labs/Desaverse.git
+cd Desaverse
 npm install
 npm run dev       # atau perintah start sesuai konfigurasi
