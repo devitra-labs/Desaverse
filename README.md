@@ -1,4 +1,4 @@
-# Lomba-TechComfest-by_devitra.team
+# Desaverse
 
 ## 🎯 Deskripsi  
 Lomba-TechComfest-by_devitra.team adalah proyek web (frontend) karya tim devitra-labs, dibangun untuk keperluan kompetisi/ event TechComfest. Proyek ini menggunakan tool modern (Vite, Node.js, dsb) dan dirancang agar mudah dipasang serta dikembangkan lebih lanjut.
