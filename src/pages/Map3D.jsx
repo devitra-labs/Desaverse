@@ -96,7 +96,7 @@ export default function Map3D() {
               <div className="grid grid-cols-2 gap-3 w-full md:w-auto">
                 <div className="bg-white px-3 py-2 md:px-4 md:py-2 rounded-lg border border-slate-200">
                   <p className="text-[10px] md:text-xs text-slate-500">Area</p>
-                  <p className="text-sm md:text-lg font-bold text-slate-800">12 km²</p>
+                  <p className="text-sm md:text-lg font-bold text-slate-800">3,30 km²</p>
                 </div>
                 <div className="bg-white px-3 py-2 md:px-4 md:py-2 rounded-lg border border-slate-200">
                   <p className="text-[10px] md:text-xs text-slate-500">Sensor</p>
@@ -221,8 +221,8 @@ export default function Map3D() {
       {/* Mengubah grid-cols-3 menjadi grid-cols-1 di mobile */}
       {!isFullscreen && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-6">
-          <StatCard icon={Home} color="blue" label="Total Bangunan" value="156" />
-          <StatCard icon={Leaf} color="green" label="Lahan Hijau" value="8.5 km²" />
+          <StatCard icon={Home} color="blue" label="Total Bangunan" value="1.250" />
+          <StatCard icon={Leaf} color="green" label="Lahan Hijau" value="3,04 km²" />
           <StatCard icon={Zap} color="amber" label="Data Points" value="1,247" />
         </div>
       )}

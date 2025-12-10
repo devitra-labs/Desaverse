@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { 
   OrbitControls, 
@@ -49,16 +49,76 @@ export default function Home() {
   const [mobileMapActive, setMobileMapActive] = useState(false);
   const [showAlert, setShowAlert] = useState(true);
 
+  // State untuk menyimpan data cuaca
+  const [apiWeather, setApiWeather] = useState({
+    t: '-',   
+    hu: '-',  
+    ws: '-'   
+  });
+
+  // --- PERBAIKAN LOGIKA FETCH DATA ---
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      try {
+        const response = await fetch('https://api-back.ct.ws/api/index.php?action=bmkg_prakiraan&adm4=35.07.26.2003');
+        const json = await response.json();
+        
+        // Debugging: Cek data di console browser
+        console.log("Response API:", json);
+
+        // Validasi struktur data sebelum mengambil nilai
+        if (json.data && json.data.length > 0 && json.data[0].cuaca) {
+          
+          // Data cuaca BMKG formatnya Array di dalam Array (Array of Arrays).
+          // Kita gunakan .flat() untuk menjadikannya satu list panjang,
+          // lalu ambil index [0] untuk mendapatkan data cuaca terdekat/terbaru.
+          const allForecasts = json.data[0].cuaca.flat();
+          const currentData = allForecasts[0];
+
+          if (currentData) {
+            setApiWeather({
+              t: currentData.t,    // Suhu
+              hu: currentData.hu,  // Kelembaban
+              ws: currentData.ws   // Kecepatan Angin
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data cuaca:", error);
+      }
+    };
+
+    fetchWeatherData();
+  }, []);
+
   const weatherData = [
-    { icon: Cloud, label: 'Suhu', value: '28°C', color: 'text-blue-600', bgColor: 'from-blue-100 to-blue-200' },
-    { icon: Droplets, label: 'Kelembaban', value: '75%', color: 'text-cyan-600', bgColor: 'from-cyan-100 to-cyan-200' },
-    { icon: Wind, label: 'Angin', value: '12 km/h', color: 'text-green-600', bgColor: 'from-green-100 to-green-200' },
+    { 
+      icon: Cloud, 
+      label: 'Suhu', 
+      value: `${apiWeather.t}°C`, 
+      color: 'text-blue-600', 
+      bgColor: 'from-blue-100 to-blue-200' 
+    },
+    { 
+      icon: Droplets, 
+      label: 'Kelembaban', 
+      value: `${apiWeather.hu}%`, 
+      color: 'text-cyan-600', 
+      bgColor: 'from-cyan-100 to-cyan-200' 
+    },
+    { 
+      icon: Wind, 
+      label: 'Angin', 
+      value: `${apiWeather.ws} km/h`, 
+      color: 'text-green-600', 
+      bgColor: 'from-green-100 to-green-200' 
+    },
   ];
 
   const monitoringStats = [
     { label: 'Sensor Aktif', value: '24/24', status: 'online', color: 'green' },
-    { label: 'Area Terpantau', value: '12 km²', status: 'normal', color: 'blue' },
-    { label: 'Populasi', value: '3,847', status: 'stable', color: 'purple' },
+    { label: 'Area Terpantau', value: '3,30 km²', status: 'normal', color: 'blue' },
+    { label: 'Populasi', value: '4.449', status: 'stable', color: 'purple' },
     { label: 'Peringatan Aktif', value: '2', status: 'warning', color: 'amber' },
   ];
 
@@ -79,7 +139,6 @@ export default function Home() {
   };
 
   return (
-    // 1. PERBAIKAN UTAMA: Padding dikurangi di mobile (p-3) agar konten tidak sempit
     <div className="py-17 flex-1 p-3 md:p-8 bg-slate-50 min-h-screen pb-24 md:pb-8 overflow-x-hidden">
       
       {/* HEADER SECTION */}
@@ -90,11 +149,10 @@ export default function Home() {
               Halo, Admin! 👋
             </h1>
             <p className="text-sm md:text-base text-slate-600 mt-1">
-              Digital Twin <span className="font-semibold text-green-600">Desa Sukamaju</span>.
+              Digital Twin <span className="font-semibold text-green-600">Desa Pujon Kidul</span>.
             </p>
           </div>
           
-          {/* Status Badge - Full width di mobile agar rapi */}
           <div className="flex items-center gap-2 bg-green-50 px-3 py-2 rounded-lg border border-green-200 w-full md:w-auto">
             <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div>
             <span className="text-xs md:text-sm font-semibold text-green-700">Sistem Online</span>
@@ -103,7 +161,6 @@ export default function Home() {
       </div>
 
       {/* WEATHER CARDS */}
-      {/* Grid 1 kolom di mobile, 3 di desktop */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 mb-4 md:mb-6">
         {weatherData.map((item, idx) => (
           <div key={idx} className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-slate-100 flex items-center justify-between">
@@ -119,7 +176,6 @@ export default function Home() {
       </div>
 
       {/* MONITORING STATS */}
-      {/* Grid responsif: 2 kolom di mobile (biar hemat tempat), 4 di desktop */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-4 md:mb-6">
         {monitoringStats.map((stat, idx) => (
           <div key={idx} className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:border-green-200 transition-colors">
@@ -134,9 +190,8 @@ export default function Home() {
         ))}
       </div>
 
-      {/* --- 3D MAP SECTION (FIXED RESPONSIVE) --- */}
+      {/* --- 3D MAP SECTION --- */}
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-100 mb-4 md:mb-6 relative">
-        {/* Header Peta */}
         <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
           <div>
             <h2 className="text-base md:text-xl font-bold text-slate-800 flex items-center gap-2">
@@ -154,12 +209,9 @@ export default function Home() {
           )}
         </div>
         
-        {/* Container Peta */}
         <div className="relative w-full transition-all duration-300 ease-in-out">
-          {/* Style tinggi dinamis: Di mobile kalau aktif dia tinggi, kalau belum aktif dia secukupnya untuk tombol */}
           <div className={`${mobileMapActive ? 'h-[350px]' : 'h-[250px]'} md:h-[400px] bg-slate-100 w-full`}>
             
-            {/* 1. PLACEHOLDER MOBILE (Tombol "Muat Peta") */}
             <div className={`absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center md:hidden bg-gradient-to-b from-white to-slate-50 ${mobileMapActive ? 'hidden' : 'flex'}`}>
               <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-3 shadow-sm">
                 <Activity className="text-green-600" size={24} />
@@ -177,7 +229,6 @@ export default function Home() {
               </button>
             </div>
 
-            {/* 2. CANVAS 3D */}
             <div className={`h-full w-full ${mobileMapActive ? 'block' : 'hidden md:block'}`}>
               <Canvas shadows camera={{ position: [8, 8, 8], fov: 45 }}>
                 <color attach="background" args={['#f0fdf4']} /> 
@@ -194,7 +245,6 @@ export default function Home() {
                 />
               </Canvas>
 
-              {/* Alert Overlay Mobile */}
               {mobileMapActive && showAlert && (
                 <div className="absolute top-4 left-4 right-4 md:hidden z-30 animate-in fade-in slide-in-from-top-2">
                   <div className="bg-amber-50/90 backdrop-blur-sm border border-amber-200 text-amber-800 p-3 rounded-xl shadow-lg flex items-start gap-3">
@@ -224,7 +274,6 @@ export default function Home() {
         </h3>
         <div className="space-y-3">
           {alerts.map((alert, idx) => (
-            // Flex-start agar icon tetap di atas jika teks panjang (wrapping)
             <div key={idx} className={`p-3 md:p-4 rounded-xl border-l-4 flex items-start gap-3 ${
               alert.type === 'warning' ? 'bg-amber-50 border-amber-500' : 
               alert.type === 'success' ? 'bg-green-50 border-green-500' :
@@ -235,7 +284,7 @@ export default function Home() {
                 alert.type === 'success' ? 'text-green-600' :
                 'text-blue-600'
               }`} size={18} />
-              <div className="flex-1 min-w-0"> {/* min-w-0 penting untuk text truncate/wrap di flex */}
+              <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm text-slate-800 leading-snug">{alert.message}</p>
                 <p className="text-[10px] md:text-xs text-slate-500 mt-1">{alert.time}</p>
               </div>

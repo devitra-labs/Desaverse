@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from 'react';
-// PERBAIKAN 1: Ganti 'ap3D' menjadi 'Map'
+// 1. IMPORT useNavigate
+import { useNavigate } from 'react-router-dom';
 import { Home, Map, Activity, BarChart3, Bell, Settings, LogOut, Menu, X } from 'lucide-react';
-
-// HAPUS import Map3D from '../pages/Map3D'; -> Tidak dibutuhkan di sini
 
 const menuItems = [
   { id: 'home', icon: Home, label: 'Dashboard' },
-  { id: 'map', icon: Map, label: 'Peta 3D' }, // Hapus properti 'element', cukup ID saja
+  { id: 'map', icon: Map, label: 'Peta 3D' },
   { id: 'monitoring', icon: Activity, label: 'Monitoring' },
-  { id: 'analytics', icon: BarChart3, label: 'Analitik' },
-  { id: 'alerts', icon: Bell, label: 'Peringatan' },
+  { id: 'analitik', icon: BarChart3, label: 'Analitik' },
+  { id: 'peringatan', icon: Bell, label: 'Peringatan' },
   { id: 'settings', icon: Settings, label: 'Pengaturan' },
 ];
 
 function Sidenav({ activeMenu, setActiveMenu }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // 2. INISIALISASI useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -91,8 +93,6 @@ function Sidenav({ activeMenu, setActiveMenu }) {
             <button
               key={item.id}
               onClick={() => {
-                // FUNGSI INI YANG MEMBUAT PINDAH HALAMAN
-                // setActiveMenu dipanggil dari App.jsx
                 setActiveMenu(item.id); 
                 if (isMobile) setSidebarOpen(false);
               }}
@@ -119,11 +119,15 @@ function Sidenav({ activeMenu, setActiveMenu }) {
 
         {/* Logout Section */}
         <div className="absolute bottom-6 left-0 right-0 px-4">
-            <button className={`w-full flex items-center px-4 py-3 rounded-xl hover:bg-green-500/30 text-green-50 transition-all group ${!sidebarOpen ? 'justify-center' : 'gap-3'}`}>
-            <LogOut size={22} strokeWidth={2} className="flex-shrink-0" />
-            <span className={`font-medium whitespace-nowrap transition-all duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'}`}>
-                Logout
-            </span>
+            <button 
+                // Tombol ini sekarang akan bekerja karena 'navigate' sudah didefinisikan
+                onClick={() => navigate('/login')}
+                className={`w-full flex items-center px-4 py-3 rounded-xl hover:bg-green-500/30 text-green-50 transition-all group ${!sidebarOpen ? 'justify-center' : 'gap-3'}`}
+            >
+                <LogOut size={22} strokeWidth={2} className="flex-shrink-0" />
+                <span className={`font-medium whitespace-nowrap transition-all duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'}`}>
+                    Logout
+                </span>
             </button>
         </div>
 
