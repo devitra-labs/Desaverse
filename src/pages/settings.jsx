@@ -246,7 +246,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-4 md:p-8 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+    <div className="py-17 p-4 md:p-8 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
       
       {/* HEADER */}
       <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 mb-6">
