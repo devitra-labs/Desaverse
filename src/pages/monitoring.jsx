@@ -95,7 +95,7 @@ export default function Monitoring() {
               time: new Date().toLocaleTimeString(), 
               event: `Update Cuaca: Suhu ${currentData.t}°C, Angin ${currentData.ws} km/h`, 
               type: 'info', 
-              sensor: 'API-BMKG' 
+              sensor: 'Sensor System' 
             });
           }
         }

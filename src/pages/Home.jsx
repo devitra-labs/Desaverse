@@ -69,7 +69,6 @@ export default function Home() {
         // Validasi struktur data sebelum mengambil nilai
         if (json.data && json.data.length > 0 && json.data[0].cuaca) {
           
-          // Data cuaca BMKG formatnya Array di dalam Array (Array of Arrays).
           // Kita gunakan .flat() untuk menjadikannya satu list panjang,
           // lalu ambil index [0] untuk mendapatkan data cuaca terdekat/terbaru.
           const allForecasts = json.data[0].cuaca.flat();

@@ -156,7 +156,7 @@ export default function SettingsPage() {
           { 
             title: "2. Dashboard Utama (Home)", 
             imageTitle: "Dashboard Home",
-            body: "Dashboard memberikan ringkasan eksekutif. Widget cuaca menampilkan kondisi real-time dari API BMKG. Ringkasan status sensor menunjukkan berapa banyak perangkat yang aktif, warning, atau offline.",
+            body: "Dashboard memberikan ringkasan eksekutif. Widget cuaca menampilkan kondisi real-time dari Sensor Kami. Ringkasan status sensor menunjukkan berapa banyak perangkat yang aktif, warning, atau offline.",
             bgColor: '#f0fdf4' // Hijau muda
           },
           { 

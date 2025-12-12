@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home, Map, Activity, BarChart3, Bell, Settings, LogOut, Menu, X } from 'lucide-react';
+import { 
+  Home, Map, Activity, BarChart3, Bell, Settings, 
+  LogOut, ChevronRight, ChevronLeft 
+} from 'lucide-react';
 
 const menuItems = [
   { id: 'home', icon: Home, label: 'Dashboard' },
@@ -14,17 +17,17 @@ const menuItems = [
 function Sidenav({ activeMenu, setActiveMenu }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  
   const navigate = useNavigate();
 
+  // Deteksi ukuran layar
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
         setIsMobile(true);
-        setSidebarOpen(false);
+        setSidebarOpen(false); // Mobile: default tertutup
       } else {
         setIsMobile(false);
-        setSidebarOpen(true);
+        setSidebarOpen(true);  // Desktop: default terbuka
       }
     };
     handleResize();
@@ -32,120 +35,133 @@ function Sidenav({ activeMenu, setActiveMenu }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // --- FUNGSI LOGOUT YANG DIPERBAIKI ---
   const handleLogout = () => {
-    // 1. (Opsional) Hapus token/session dari localStorage jika ada
-    //localStorage.removeItem('userToken'); 
-    
-    // 2. Arahkan ke login dengan replace: true agar tidak bisa di-back
+    // Tambahkan logika hapus token di sini jika perlu
     navigate('/', { replace: true });
   };
 
-  const logoSize = sidebarOpen ? 'w-12 h-12 rounded-xl' : 'w-8 h-8 rounded-lg';
-  const iconSize = sidebarOpen ? 28 : 18;
-
   return (
     <>
-      {/* Mobile Toggle Button */}
-      <button 
-        onClick={() => setSidebarOpen(true)}
-        className={`fixed top-4 left-4 z-40 p-2 bg-green-600 text-white rounded-lg shadow-lg md:hidden transition-opacity duration-300 ${sidebarOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-      >
-        <Menu size={24} />
-      </button>
-
-      {/* Overlay Mobile */}
+      {/* 1. OVERLAY (Hanya Muncul di Mobile saat sidebar terbuka) */}
       {isMobile && sidebarOpen && (
         <div 
           onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 bg-black/50 z-40 transition-opacity backdrop-blur-sm"
+          className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm transition-opacity"
         />
       )}
 
-      {/* Sidebar Container */}
-      <div 
+      {/* 2. SIDEBAR CONTAINER UTAMA */}
+      <aside 
         className={`
-          fixed md:sticky top-0 left-0 h-screen z-50
-          bg-gradient-to-b from-green-600 to-emerald-700 text-white 
-          transition-all duration-300 shadow-2xl 
-          ${sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0 md:w-20'}
+          /* Posisi & Layout */
+          fixed md:sticky top-0 left-0 h-[100dvh] z-50 flex flex-col
+          
+          /* Styling Visual */
+          bg-gradient-to-b from-green-600 to-emerald-700 text-white shadow-2xl
+          
+          /* Transisi Animasi */
+          transition-all duration-300 ease-in-out
+          
+          /* Lebar Dinamis */
+          ${sidebarOpen ? 'w-64' : 'w-0 md:w-20'}
+          ${!sidebarOpen && isMobile ? '-translate-x-full' : 'translate-x-0'}
         `}
       >
-        {/* Logo Section */}
-        <div className={`border-b border-green-500/30 flex items-center transition-all duration-300 ${sidebarOpen ? 'p-6 justify-between' : 'p-4 justify-center'}`}>
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className={`relative flex-shrink-0 transition-all duration-300 ${logoSize}`}>
-              <div className={`absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-500 transform rotate-12 shadow-lg transition-all duration-300 ${logoSize}`}></div>
-              <div className={`absolute inset-0 bg-gradient-to-br from-green-300 to-emerald-400 absolute top-0 left-0 transform -rotate-6 shadow-lg transition-all duration-300 ${logoSize}`}></div>
-              <div className={`absolute inset-0 bg-white absolute top-0 left-0 flex items-center justify-center shadow-xl z-10 transition-all duration-300 ${logoSize}`}>
-                <Activity className="text-green-600 transition-all duration-300" size={iconSize} strokeWidth={2.5} />
-              </div>
+        {/* --- TOMBOL TOGGLE (TAB PANAH) --- */}
+        {/* Logic: Tombol ini absolute terhadap sidebar, jadi dia ikut bergerak */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className={`
+            absolute top-20 -right-6
+            flex items-center justify-center
+            w-6 h-12
+            bg-emerald-700 text-white
+            rounded-r-lg shadow-[2px_0_5px_rgba(0,0,0,0.1)]
+            border-y border-r border-green-500/30
+            cursor-pointer z-50
+            hover:bg-emerald-600 hover:w-8 transition-all
+            /* Sembunyikan tombol ini jika di desktop & sidebar tertutup (opsional, agar lebih rapi) */
+            ${!sidebarOpen && !isMobile ? 'md:hidden' : ''}
+          `}
+          title="Toggle Sidebar"
+        >
+          {sidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+        </button>
+
+        {/* --- HEADER LOGO --- */}
+        <div className={`flex items-center border-b border-green-500/30 flex-shrink-0 h-20 transition-all duration-300 ${sidebarOpen ? 'px-6' : 'px-0 justify-center'}`}>
+           {/* Wrapper Logo - Hide jika mobile tertutup agar tidak bocor */}
+          <div className={`flex items-center gap-3 overflow-hidden ${!sidebarOpen && isMobile ? 'hidden' : 'flex'}`}>
+            <div className={`relative flex-shrink-0 flex items-center justify-center bg-white rounded-xl shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-10 h-10' : 'w-8 h-8'}`}>
+               <Activity className="text-green-600" size={sidebarOpen ? 22 : 18} />
             </div>
-            <div className={`flex flex-col transition-all duration-300 ${sidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'}`}>
-              <span className="font-bold text-xl tracking-tight whitespace-nowrap">Desaverse</span>
-              <span className="text-xs text-green-200 whitespace-nowrap">Digital Twin Desa</span>
+            
+            {/* Teks Logo (Hanya muncul jika sidebar buka) */}
+            <div className={`flex flex-col transition-all duration-300 ${sidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0 hidden'}`}>
+              <span className="font-bold text-lg tracking-tight whitespace-nowrap">Desaverse</span>
+              <span className="text-[10px] text-green-100/80 whitespace-nowrap">Digital Twin</span>
             </div>
           </div>
+        </div>
+
+        {/* --- MENU LIST (Scrollable Area) --- */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden py-4 space-y-2">
+          {menuItems.map((item) => (
+            <div key={item.id} className="px-3">
+              <button
+                onClick={() => {
+                  setActiveMenu(item.id); 
+                  if (isMobile) setSidebarOpen(false);
+                }}
+                className={`
+                  relative w-full flex items-center py-3 rounded-xl transition-all duration-200 group
+                  ${activeMenu === item.id 
+                    ? 'bg-white text-green-600 shadow-md' 
+                    : 'text-green-50 hover:bg-green-500/20'
+                  }
+                  ${sidebarOpen ? 'px-4 gap-3' : 'justify-center px-0'}
+                `}
+              >
+                <item.icon size={22} strokeWidth={2} className="flex-shrink-0 min-w-[22px]" />
+                
+                <span className={`whitespace-nowrap font-medium transition-all duration-300 ${sidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 w-0 hidden'}`}>
+                  {item.label}
+                </span>
+
+                {/* Tooltip Hover saat Sidebar Tertutup (Desktop Only) */}
+                {!sidebarOpen && !isMobile && (
+                  <div className="absolute left-full ml-4 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap shadow-xl">
+                    {item.label}
+                  </div>
+                )}
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* --- FOOTER (LOGOUT) --- */}
+        <div className="p-4 border-t border-green-500/30 flex-shrink-0">
           <button 
-            onClick={() => setSidebarOpen(false)}
-            className="md:hidden text-white hover:bg-green-500/30 p-1 rounded-full absolute right-4"
+            onClick={handleLogout}
+            className={`
+              w-full flex items-center py-3 rounded-xl text-green-50 hover:bg-green-500/20 transition-all group
+              ${sidebarOpen ? 'px-4 gap-3' : 'justify-center px-0'}
+            `}
           >
-            <X size={20} />
+            <LogOut size={22} strokeWidth={2} className="flex-shrink-0" />
+            <span className={`font-medium whitespace-nowrap transition-all duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'}`}>
+              Logout
+            </span>
+            
+            {!sidebarOpen && !isMobile && (
+              <div className="absolute left-14 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap shadow-xl">
+                Logout
+              </div>
+            )}
           </button>
         </div>
 
-        {/* Menu Items */}
-        <nav className="p-4 space-y-2 overflow-y-auto max-h-[calc(100vh-180px)] scrollbar-hide">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                setActiveMenu(item.id); 
-                if (isMobile) setSidebarOpen(false);
-              }}
-              className={`w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 group relative ${
-                activeMenu === item.id
-                  ? 'bg-white text-green-600 shadow-lg scale-105'
-                  : 'hover:bg-green-500/30 text-green-50'
-              } ${!sidebarOpen && !isMobile ? 'justify-center' : 'gap-3'}`} 
-            >
-              <div className="flex-shrink-0">
-                <item.icon size={22} strokeWidth={2} />
-              </div>
-              <span className={`font-medium whitespace-nowrap transition-all duration-300 ${sidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden hidden md:block'}`}>
-                {item.label}
-              </span>
-              {!sidebarOpen && !isMobile && (
-                <div className="absolute left-14 px-3 py-1 bg-gray-900 text-white text-xs font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none whitespace-nowrap shadow-lg">
-                  {item.label}
-                </div>
-              )}
-            </button>
-          ))}
-        </nav>
-
-        {/* Logout Section */}
-        <div className="absolute bottom-6 left-0 right-0 px-4">
-            <button 
-                // PERBAIKAN DI SINI: Panggil fungsi handleLogout
-                onClick={handleLogout}
-                className={`w-full flex items-center px-4 py-3 rounded-xl hover:bg-green-500/30 text-green-50 transition-all group ${!sidebarOpen ? 'justify-center' : 'gap-3'}`}
-            >
-                <LogOut size={22} strokeWidth={2} className="flex-shrink-0" />
-                <span className={`font-medium whitespace-nowrap transition-all duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'}`}>
-                    Logout
-                </span>
-            </button>
-        </div>
-
-        {/* Toggle Button Desktop */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="hidden md:flex absolute -right-3 top-10 bg-white text-green-600 p-1.5 rounded-full shadow-lg hover:scale-110 transition-transform z-50 items-center justify-center border border-green-100"
-        >
-          {sidebarOpen ? <X size={14} /> : <Menu size={14} />}
-        </button>
-      </div>
+      </aside>
     </>
   );
 }

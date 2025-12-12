@@ -230,7 +230,7 @@ export default function Analitik() {
               <BarChart3 className="text-green-600" size={28} />
               Analitik (Data Realtime)
             </h2>
-            <p className="text-sm text-slate-600 mt-1">Data diambil langsung dari API Prakiraan BMKG</p>
+            <p className="text-sm text-slate-600 mt-1">Data diambil langsung dari Sensor milik Kami</p>
           </div>
           
           <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto">

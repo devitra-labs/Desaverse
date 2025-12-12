@@ -194,7 +194,7 @@ export default function Map3D() {
           <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg border border-slate-200 w-max max-w-[90%]">
             <p className="text-xs md:text-sm text-slate-600 flex items-center gap-2 truncate">
               <Map className="text-green-600 flex-shrink-0" size={16} />
-              <span className="font-medium">Desa Sukamaju</span>
+              <span className="font-medium">Desa Pujon Kidul</span>
               <span className="hidden md:inline text-slate-400">•</span>
               <span className="hidden md:inline">Real-time Monitoring</span>
             </p>
