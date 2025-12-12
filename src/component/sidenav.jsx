@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// 1. IMPORT useNavigate
 import { useNavigate } from 'react-router-dom';
 import { Home, Map, Activity, BarChart3, Bell, Settings, LogOut, Menu, X } from 'lucide-react';
 
@@ -16,7 +15,6 @@ function Sidenav({ activeMenu, setActiveMenu }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   
-  // 2. INISIALISASI useNavigate
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,6 +31,15 @@ function Sidenav({ activeMenu, setActiveMenu }) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // --- FUNGSI LOGOUT YANG DIPERBAIKI ---
+  const handleLogout = () => {
+    // 1. (Opsional) Hapus token/session dari localStorage jika ada
+    //localStorage.removeItem('userToken'); 
+    
+    // 2. Arahkan ke login dengan replace: true agar tidak bisa di-back
+    navigate('/', { replace: true });
+  };
 
   const logoSize = sidebarOpen ? 'w-12 h-12 rounded-xl' : 'w-8 h-8 rounded-lg';
   const iconSize = sidebarOpen ? 28 : 18;
@@ -120,8 +127,8 @@ function Sidenav({ activeMenu, setActiveMenu }) {
         {/* Logout Section */}
         <div className="absolute bottom-6 left-0 right-0 px-4">
             <button 
-                // Tombol ini sekarang akan bekerja karena 'navigate' sudah didefinisikan
-                onClick={() => navigate('/login')}
+                // PERBAIKAN DI SINI: Panggil fungsi handleLogout
+                onClick={handleLogout}
                 className={`w-full flex items-center px-4 py-3 rounded-xl hover:bg-green-500/30 text-green-50 transition-all group ${!sidebarOpen ? 'justify-center' : 'gap-3'}`}
             >
                 <LogOut size={22} strokeWidth={2} className="flex-shrink-0" />

@@ -60,7 +60,7 @@ export default function Home() {
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
-        const response = await fetch('https://api-back.ct.ws/api/index.php?action=bmkg_prakiraan&adm4=35.07.26.2003');
+        const response = await fetch('https://desaverse.up.railway.app/index.php?action=bmkg_prakiraan&adm4=35.07.26.2003');
         const json = await response.json();
         
         // Debugging: Cek data di console browser

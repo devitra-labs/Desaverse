@@ -108,7 +108,7 @@ export default function LoginPage() {
 
       // 2. TEMBAK KE URL HOSTING ASLI (Bukan Localhost)
       // Ganti URL ini sesuai letak file index.php kamu di hosting
-      const response = await fetch("https://api-back.ct.ws/api/index.php?action=login", {
+      const response = await fetch("https://desaverse.up.railway.app/index.php?action=login", {
         method: "POST",
         headers: {
           // Jangan pakai application/json, pakai ini:
