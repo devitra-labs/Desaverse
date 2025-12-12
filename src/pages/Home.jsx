@@ -138,7 +138,7 @@ export default function Home() {
   };
 
   return (
-    <div className="py-17 flex-1 p-3 md:p-8 bg-slate-50 min-h-screen pb-24 md:pb-8 overflow-x-hidden">
+    <div className="flex-1 p-3 md:p-8 bg-slate-50 min-h-screen pb-24 md:pb-8 overflow-x-hidden">
       
       {/* HEADER SECTION */}
       <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-sm mb-4 md:mb-8">

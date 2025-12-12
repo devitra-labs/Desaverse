@@ -75,7 +75,7 @@ export default function Map3D() {
 
   return (
     // Responsive Padding: p-4 di HP, p-8 di Desktop
-    <div className={`py-17 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen ${isFullscreen ? 'fixed inset-0 z-50 p-0' : 'p-4 md:p-8'}`}>
+    <div className={`bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen ${isFullscreen ? 'fixed inset-0 z-50 p-0' : 'p-4 md:p-8'}`}>
       
       {/* 3D Map Section */}
       <div className={`bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 flex flex-col ${isFullscreen ? 'h-full rounded-none border-none' : ''}`}>
