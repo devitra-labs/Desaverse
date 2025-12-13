@@ -28,7 +28,7 @@ function VillageScene() {
   const groupRef = useRef();
   
   // 1. Load Model GLB
-  const { scene } = useGLTF('/3dmap-pujon.glb');
+  const { scene } = useGLTF('/3dmap-pujon-v1.glb');
 
   useFrame((state, delta) => {
     // Rotasi pelan agar elegan

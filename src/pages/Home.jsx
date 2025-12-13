@@ -27,7 +27,7 @@ function VillageScene() {
   const groupRef = useRef();
 
   // Load Model
-  const { scene } = useGLTF('/3dmap-pujon.glb');
+  const { scene } = useGLTF('/3dmap-pujon-v1.glb');
 
   useFrame((state, delta) => {
     if (groupRef.current) {
