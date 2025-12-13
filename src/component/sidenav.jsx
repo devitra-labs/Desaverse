@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Home, Map, Activity, BarChart3, Bell, Settings, 
-  LogOut, ChevronRight, ChevronLeft 
+  LogOut, ChevronRight, ChevronLeft, X 
 } from 'lucide-react';
 
 const menuItems = [
@@ -19,15 +19,15 @@ function Sidenav({ activeMenu, setActiveMenu }) {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
 
-  // Deteksi ukuran layar
+  // Deteksi Mobile vs Desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
         setIsMobile(true);
-        setSidebarOpen(false); // Mobile: default tertutup
+        setSidebarOpen(false); // Mobile: Default tutup
       } else {
         setIsMobile(false);
-        setSidebarOpen(true);  // Desktop: default terbuka
+        setSidebarOpen(true);  // Desktop: Default buka
       }
     };
     handleResize();
@@ -36,76 +36,98 @@ function Sidenav({ activeMenu, setActiveMenu }) {
   }, []);
 
   const handleLogout = () => {
-    // Tambahkan logika hapus token di sini jika perlu
     navigate('/', { replace: true });
   };
 
   return (
     <>
-      {/* 1. OVERLAY (Hanya Muncul di Mobile saat sidebar terbuka) */}
+      {/* 1. OVERLAY GELAP (Hanya di Mobile saat Sidebar Terbuka) */}
       {isMobile && sidebarOpen && (
         <div 
           onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm transition-opacity"
         />
       )}
 
-      {/* 2. SIDEBAR CONTAINER UTAMA */}
+      {/* 2. TOMBOL TOGGLE EKSTERNAL (PANAH HIJAU) */}
+      {/* Tombol ini HANYA muncul jika sidebar TERTUTUP */}
+      {!sidebarOpen && (
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className={`
+            fixed top-24 left-0 z-50
+            flex items-center justify-center
+            w-8 h-12
+            bg-emerald-700 text-white
+            rounded-r-lg shadow-lg border-y border-r border-green-400/50
+            cursor-pointer hover:w-10 transition-all duration-200
+            /* Pastikan tombol ini tidak tertutup elemen lain */
+          `}
+          title="Buka Menu"
+        >
+          <ChevronRight size={20} />
+        </button>
+      )}
+
+      {/* 3. CONTAINER SIDEBAR UTAMA */}
       <aside 
         className={`
-          /* Posisi & Layout */
+          /* Layout Dasar */
           fixed md:sticky top-0 left-0 h-[100dvh] z-50 flex flex-col
+          bg-gradient-to-b from-green-600 to-emerald-800 text-white shadow-2xl
           
-          /* Styling Visual */
-          bg-gradient-to-b from-green-600 to-emerald-700 text-white shadow-2xl
+          /* FIX UTAMA: overflow-hidden 
+             Ini wajib ada agar padding tombol Logout tidak 'bocor' saat width = 0 */
+          overflow-hidden
           
-          /* Transisi Animasi */
+          /* Animasi */
           transition-all duration-300 ease-in-out
           
-          /* Lebar Dinamis */
+          /* Logika Lebar & Posisi */
+          /* Mobile: Jika tutup width 0 (hilang total). Jika buka width 64 */
+          /* Desktop: Jika tutup width 20 (mini). Jika buka width 64 */
           ${sidebarOpen ? 'w-64' : 'w-0 md:w-20'}
-          ${!sidebarOpen && isMobile ? '-translate-x-full' : 'translate-x-0'}
         `}
       >
-        {/* --- TOMBOL TOGGLE (TAB PANAH) --- */}
-        {/* Logic: Tombol ini absolute terhadap sidebar, jadi dia ikut bergerak */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className={`
-            absolute top-20 -right-6
-            flex items-center justify-center
-            w-6 h-12
-            bg-emerald-700 text-white
-            rounded-r-lg shadow-[2px_0_5px_rgba(0,0,0,0.1)]
-            border-y border-r border-green-500/30
-            cursor-pointer z-50
-            hover:bg-emerald-600 hover:w-8 transition-all
-            /* Sembunyikan tombol ini jika di desktop & sidebar tertutup (opsional, agar lebih rapi) */
-            ${!sidebarOpen && !isMobile ? 'md:hidden' : ''}
-          `}
-          title="Toggle Sidebar"
-        >
-          {sidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
-        </button>
-
-        {/* --- HEADER LOGO --- */}
-        <div className={`flex items-center border-b border-green-500/30 flex-shrink-0 h-20 transition-all duration-300 ${sidebarOpen ? 'px-6' : 'px-0 justify-center'}`}>
-           {/* Wrapper Logo - Hide jika mobile tertutup agar tidak bocor */}
+        
+        {/* --- HEADER --- */}
+        <div className={`
+          flex items-center h-20 flex-shrink-0 border-b border-green-500/30 
+          transition-all duration-300 whitespace-nowrap
+          ${sidebarOpen ? 'px-6 justify-between' : 'justify-center px-0'}
+        `}>
+          
+          {/* Logo Wrapper */}
           <div className={`flex items-center gap-3 overflow-hidden ${!sidebarOpen && isMobile ? 'hidden' : 'flex'}`}>
-            <div className={`relative flex-shrink-0 flex items-center justify-center bg-white rounded-xl shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-10 h-10' : 'w-8 h-8'}`}>
-               <Activity className="text-green-600" size={sidebarOpen ? 22 : 18} />
+            <div className="bg-white/10 p-2 rounded-lg backdrop-blur-sm flex-shrink-0">
+               <Activity className="text-white" size={24} />
             </div>
-            
-            {/* Teks Logo (Hanya muncul jika sidebar buka) */}
-            <div className={`flex flex-col transition-all duration-300 ${sidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0 hidden'}`}>
-              <span className="font-bold text-lg tracking-tight whitespace-nowrap">Desaverse</span>
-              <span className="text-[10px] text-green-100/80 whitespace-nowrap">Digital Twin</span>
+            <div className={`flex flex-col transition-all duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'}`}>
+              <span className="font-bold text-lg">Desaverse</span>
+              <span className="text-[10px] text-green-200">Digital Twin</span>
             </div>
           </div>
+
+          {/* Tombol X (Tutup) - Mobile Only */}
+          {isMobile && sidebarOpen && (
+            <button 
+              onClick={() => setSidebarOpen(false)}
+              className="p-1 rounded-full hover:bg-white/20 text-white transition-colors"
+            >
+              <X size={24} />
+            </button>
+          )}
+
+          {/* Tombol Panah Kiri (Tutup) - Desktop Only */}
+          {!isMobile && sidebarOpen && (
+             <button onClick={() => setSidebarOpen(false)} className="text-green-200 hover:text-white">
+                <ChevronLeft size={20}/>
+             </button>
+          )}
         </div>
 
-        {/* --- MENU LIST (Scrollable Area) --- */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden py-4 space-y-2">
+        {/* --- MENU LIST --- */}
+        <div className="flex-1 overflow-y-auto py-4 space-y-1 overflow-x-hidden">
           {menuItems.map((item) => (
             <div key={item.id} className="px-3">
               <button
@@ -114,23 +136,23 @@ function Sidenav({ activeMenu, setActiveMenu }) {
                   if (isMobile) setSidebarOpen(false);
                 }}
                 className={`
-                  relative w-full flex items-center py-3 rounded-xl transition-all duration-200 group
+                  w-full flex items-center py-3 rounded-xl transition-all duration-200 group relative whitespace-nowrap
                   ${activeMenu === item.id 
-                    ? 'bg-white text-green-600 shadow-md' 
-                    : 'text-green-50 hover:bg-green-500/20'
+                    ? 'bg-white text-green-700 shadow-md font-semibold' 
+                    : 'text-green-50 hover:bg-white/10 hover:text-white'
                   }
                   ${sidebarOpen ? 'px-4 gap-3' : 'justify-center px-0'}
                 `}
               >
-                <item.icon size={22} strokeWidth={2} className="flex-shrink-0 min-w-[22px]" />
+                <item.icon size={22} className="flex-shrink-0 min-w-[22px]" />
                 
-                <span className={`whitespace-nowrap font-medium transition-all duration-300 ${sidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 w-0 hidden'}`}>
+                <span className={`transition-all duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'}`}>
                   {item.label}
                 </span>
 
-                {/* Tooltip Hover saat Sidebar Tertutup (Desktop Only) */}
+                {/* Tooltip Desktop */}
                 {!sidebarOpen && !isMobile && (
-                  <div className="absolute left-full ml-4 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap shadow-xl">
+                  <div className="absolute left-14 z-50 px-3 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
                     {item.label}
                   </div>
                 )}
@@ -140,30 +162,30 @@ function Sidenav({ activeMenu, setActiveMenu }) {
         </div>
 
         {/* --- FOOTER (LOGOUT) --- */}
-        <div className="p-4 border-t border-green-500/30 flex-shrink-0">
+        <div className="p-4 border-t border-green-500/30 flex-shrink-0 overflow-hidden">
           <button 
             onClick={handleLogout}
             className={`
-              w-full flex items-center py-3 rounded-xl text-green-50 hover:bg-green-500/20 transition-all group
+              w-full flex items-center py-3 rounded-xl text-red-100 hover:bg-red-500/20 hover:text-white transition-all group whitespace-nowrap
               ${sidebarOpen ? 'px-4 gap-3' : 'justify-center px-0'}
             `}
           >
-            <LogOut size={22} strokeWidth={2} className="flex-shrink-0" />
-            <span className={`font-medium whitespace-nowrap transition-all duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'}`}>
+            <LogOut size={22} className="flex-shrink-0 min-w-[22px]" />
+            <span className={`font-medium transition-all duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'}`}>
               Logout
             </span>
             
+            {/* Tooltip Logout Desktop */}
             {!sidebarOpen && !isMobile && (
-              <div className="absolute left-14 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap shadow-xl">
+              <div className="absolute left-14 z-50 px-3 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
                 Logout
               </div>
             )}
           </button>
         </div>
-
       </aside>
     </>
   );
 }
 
-export default Sidenav;
+export default Sidenav; 
